@@ -7,3 +7,5 @@ Mood Weather app streamlit, weatherapi API.
 pip install -r requirements.txt 
 streamlit run src/app.py 
 ```
+
+
