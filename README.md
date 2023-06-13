@@ -17,32 +17,27 @@ streamlit run src/app.py
 
 
 
-## Building a Weather Mood Tracker App with Streamlit: A Step-by-Step Guide
-### Introduction:
-In this tutorial, we will walk through the process of creating a Weather Mood Tracker app using Streamlit, a powerful Python library for building interactive web applications. Our app will analyze weather data and its impact on mood, providing valuable insights and visualizations. By the end of this tutorial, you'll have a functional app that can help you understand how weather affects your mood. So, let's dive in!
-
-### Introduction to Streamlit
-Streamlit is a Python library that makes it easy to create and share interactive web apps for data science and machine learning projects. It allows developers to build beautiful and intuitive user interfaces with minimal code. Streamlit's simplicity and versatility make it an ideal choice for our Weather Mood Tracker app.
-
-### Setting Up the Development Environment
-Before we begin, let's set up our development environment. Make sure you have Python and pip installed on your machine. Open a terminal or command prompt and create a new virtual environment:
+## Создание приложения для отслеживания настроения и погоды с помощью Streamlit: Пошаговое руководство
+### Введение:
+В этом руководстве мы рассмотрим процесс создания приложения для отслеживания погодного настроения с помощью Streamlit, мощной библиотеки Python для создания интерактивных веб-приложений. Наше приложение будет анализировать погодные данные и их влияние на настроение, предоставляя ценные сведения и визуализации. К концу этой статьи у вас будет функциональное приложение, которое поможет вам понять, как погода влияет на ваше настроение. Итак, давайте погрузимся!
 ```
 python -m venv weather-mood-tracker-env
 ```
-Activate the virtual environment:
+Активируйте виртуальную среду:
 
-* For Windows:
-```weather-mood-tracker-env\Scripts\activate
-```
-* For macOS/Linux:
-```source weather-mood-tracker-env/bin/activate
-```
-Next, install the required libraries by executing the following command:
+* Для Windows:
+```weather-mood-tracker-env\Scripts\activate```
+* Для macOS/Linux:
+```source weather-mood-tracker-env/bin/activate```
+
+Затем установите необходимые библиотеки, выполнив следующую команду:
 ```pip install streamlit pandas scikit-learn plotly```
-Or using requirements file:
+Или с помощью файла требований:
 ``` pip install -r /path/to/requirements.txt```
 
-### Collecting and Preparing Weather Data
+### Сбор и подготовка данных о погоде
+Чтобы проанализировать влияние погоды на настроение, нам нужны данные о погоде. Существует несколько вариантов получения данных о погоде, включая погодные API или общедоступные наборы данных. Выберите вариант, который лучше всего соответствует вашим потребностям, и соберите необходимые данные о погоде. Убедитесь, что данные включают температуру, влажность, скорость ветра и другие необходимые погодные характеристики.
+
 
 ### Collecting Mood Data
 
