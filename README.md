@@ -152,7 +152,124 @@ def calculate_plane_coefficients(lda):
     return plane_normal, plane_d
 ```
 
-### Visualizing the Data
+### Визуализация данных
+**- display_mood_insights:**
+Функция display_mood_insights использует Plotly для создания интерактивных визуализаций, которые дают представление о взаимосвязи между погодными факторами и настроением. Она включает в себя 3D диаграммы рассеяния с визуализацией гиперплоскости и 2D проекции точек данных на гиперплоскость. Вот пример реализации:
+```
+import plotly.graph_objects as go
+
+def display_mood_insights():
+    st.header("Mood Insights")
+    calculate_mood_statistics()
+
+    # Fetch weather data and mood labels
+    if os.path.isfile(csv_file):
+        df = pd.read_csv(csv_file)
+        weather_data = df[["Temperature", "Humidity", "Wind Speed"]]
+        mood_labels = df["Mood"]
+
+        # Perform LDA on weather data
+        lda = perform_lda(weather_data, mood_labels)
+
+        # Get the significance of weather factors
+        factors = weather_data.columns
+        significance = np.abs(lda.coef_[0])
+        sorted_indices = np.argsort(significance)[::-1]  # Sort in descending order
+
+        # Display the most significant weather factors
+        st.subheader("Most Significant Weather Factors on Mood:")
+        for i in sorted_indices:
+            factor = factors[i]
+            factor_significance = significance[i]
+            st.write(f"{factor}: {factor_significance:.2f}")
+
+        # Visualize the significance as a bar chart
+        significance_data = pd.DataFrame(
+            {"Factor": factors[sorted_indices], "Significance": significance[sorted_indices]})
+        st.bar_chart(significance_data, x="Factor", y="Significance")
+
+        # Map mood labels to numerical values
+        encoded_labels = map_mood_labels(mood_labels)
+
+        # Calculate plane coefficients
+        plane_normal, plane_d = calculate_plane_coefficients(lda)
+        st.subheader("Your data all in one.")
+        
+        # Create a 3D scatter plot with hyperplane visualization
+        fig = go.Figure(data=[
+            go.Scatter3d(
+                x=weather_data["Temperature"],
+                y=weather_data["Humidity"],
+                z=weather_data["Wind Speed"],
+                mode="markers",
+                marker=dict(
+                    size=5,
+                    color=encoded_labels,
+                    colorscale="Viridis",
+                    opacity=0.8
+                ),
+                name="Weather Data",
+                text=mood_labels,
+                hovertemplate="%{text}"
+            ),
+            go.Mesh3d(
+                x=[-30, 40, 40, -30],
+                y=[20, 20, 100, 100],
+                z=[(-plane_normal[0]*(-30) - plane_normal[1]*20 - plane_d) / plane_normal[2],
+                (-plane_normal[0]*40 - plane_normal[1]*20 - plane_d) / plane_normal[2],
+                (-plane_normal[0]*40 - plane_normal[1]*100 - plane_d) / plane_normal[2],
+                (-plane_normal[0]*(-30) - plane_normal[1]*100 - plane_d) / plane_normal[2]],
+                i=[0, 1, 2, 0],
+                j=[1, 2, 3, 1],
+                k=[3, 0, 1, 3],
+                opacity=0.3,
+                color="rgba(255, 0, 0, 0.3)",
+                name="Dividing Hyperplane"
+            )
+        ])
+
+        fig.update_layout(
+            scene=dict(
+                xaxis_title="Temperature",
+                yaxis_title="Humidity",
+                zaxis_title="Wind Speed"
+            ),
+            margin=dict(l=0, r=0, b=0, t=0)
+        )
+
+        st.plotly_chart(fig)
+
+        # Funny insights based on the weather factors
+        if factors[sorted_indices[0]] == "Temperature":
+            if significance[sorted_indices[0]] > 0.5:
+                st.markdown(
+                    "<h3 style='font-weight:bold;'>You are a hot and spicy person! 🔥🌶️</h3>", unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    "<h3 style='font-weight:bold;'>You are as cool as a cucumber! 🥒❄️</h3>", unsafe_allow_html=True)
+        elif factors[sorted_indices[0]] == "Humidity":
+            if significance[sorted_indices[0]] > 0.5:
+                st.markdown(
+                    "<h3 style='font-weight:bold;'>You are a humidifier! 💦😅</h3>", unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    "<h3 style='font-weight:bold;'>You are a desert dweller. 🏜️😎</h3>", unsafe_allow_html=True)
+        elif factors[sorted_indices[0]] == "Wind Speed":
+            if significance[sorted_indices[0]] > 0.5:
+                st.markdown(
+                    "<h3 style='font-weight:bold;'>You are a tornado of energy! 🌪️⚡</h3>", unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    "<h3 style='font-weight:bold;'>You are as calm as a gentle breeze! 🍃😌</h3>", unsafe_allow_html=True)
+
+    else:
+        st.write("No mood entries available.")
+```
+
+В функции display_mood_insights мы сначала рассчитываем LDA и извлекаем значимость погодных факторов. Мы отображаем наиболее значимые погодные факторы и визуализируем их значимость с помощью гистограммы. Затем мы сопоставляем метки настроения с числовыми значениями, вычисляем коэффициенты плоскости и создаем трехмерную диаграмму рассеяния с данными о погоде. Диаграмма рассеяния включает визуализацию гиперплоскости с помощью сетчатого графика. Наконец, мы предоставляем забавные сведения, основанные на наиболее значимом погодном факторе.
+
+Включив функцию display_mood_insights в свое приложение Streamlit, пользователи смогут исследовать взаимосвязь между погодными факторами и настроением в интерактивном и визуально привлекательном виде.
+
 
 ### Building the Weather Mood Tracker App
 
